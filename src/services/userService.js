@@ -1,8 +1,8 @@
-const mongodbConnection = require("../database/mongodb-connection");
+const userConnection = require("../database/userConnection");
 
 exports.getUserByUsername = async (req, res) => {
   try {
-    const result = await mongodbConnection.getUserByUsername(
+    const result = await userConnection.getUserByUsername(
       req.query.username
     );
 

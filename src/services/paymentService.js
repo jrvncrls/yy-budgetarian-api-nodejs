@@ -1,17 +1,12 @@
-const connection = require("../database/connection");
 const balanceService = require("./balanceService");
+const paymentConnection = require("../database/paymentConnection");
 
 exports.addPayment = async (req, res) => {
   try {
     const payload = req.body;
-    const query =
-      `INSERT INTO ` +
-      `payments (Amount, UserId) ` +
-      `VALUES ` +
-      `('${payload.amount}', '${payload.userId}')`;
 
     const result = await Promise.all([
-      connection(query),
+      paymentConnection.addPayment(payload),
       balanceService.updateBalance(payload.userId),
     ]);
 
@@ -19,7 +14,7 @@ exports.addPayment = async (req, res) => {
       isError: false,
       result: [
         {
-          newBalance: result[1][0].amount,
+          newBalance: result[1].newBalance,
           message: "New payment has been added!",
         },
       ],

@@ -1,18 +1,14 @@
-const connection = require("../database/connection");
+const authConnection = require("../database/authConnection");
 
 exports.login = async (req, res) => {
   try {
     const payload = req.body;
-    const query =
-      `SELECT * from users ` +
-      `where Username = '${payload.username}' and ` +
-      `password =  '${payload.password}'`;
 
-    const result = await connection(query);
+    const result = await authConnection.login(payload);
 
     let isAuthorized = false;
 
-    if (result.length > 0) {
+    if (result != null) {
       isAuthorized = true;
     }
 
@@ -21,7 +17,7 @@ exports.login = async (req, res) => {
       result: [
         {
           isAuthorized,
-          userId: result[0].Id
+          userId: isAuthorized ? result._id : null,
         },
       ],
     });

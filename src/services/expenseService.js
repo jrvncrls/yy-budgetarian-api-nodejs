@@ -1,18 +1,12 @@
-const connection = require("../database/connection");
 const balanceService = require("./balanceService");
+const expenseConnection = require("../database/expenseConnection");
 
 exports.addExpense = async (req, res) => {
   try {
     const payload = req.body;
-    const query =
-      `INSERT INTO ` +
-      `expenses ` +
-      `VALUES ` +
-      `(null, '${payload.amount}', '${payload.description}', ` +
-      `'${payload.userId}', '${payload.method}')`;
 
     const result = await Promise.all([
-      connection(query),
+      expenseConnection.addExpense(payload),
       balanceService.updateBalance(payload.userId),
     ]);
 
@@ -20,39 +14,11 @@ exports.addExpense = async (req, res) => {
       isError: false,
       result: [
         {
-          newBalance: result[1][0].amount,
+          newBalance: result[1].newBalance,
           message: "New expense has been added!",
         },
       ],
     });
-  } catch (error) {
-    return res.status(500).json({ isError: true, error });
-  }
-};
-
-exports.getTotalExpense = async () => {
-  try {
-    const query = `SELECT (SUM(Amount) / 2) AS Total FROM expenses`;
-
-    const result = await connection(query);
-
-    return result.Total;
-  } catch (error) {
-    return error;
-  }
-};
-
-exports.getTotalExpenseByUser = async (req, res) => {
-  try {
-    const payload = req.body;
-
-    const query =
-      `SELECT SUM(Amount) AS Total FROM expenses` +
-      `where  UserId = '${payload.userId}' and ExpenseMethod = 'Cash'`;
-
-    const result = await connection(query);
-
-    return result.Total;
   } catch (error) {
     return res.status(500).json({ isError: true, error });
   }

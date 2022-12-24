@@ -1,16 +1,10 @@
-const connection = require("../database/connection");
+const mongodbConnection = require("../database/mongodb-connection");
 
-exports.getUsers = async (req, res) => {
+exports.getUserByUsername = async (req, res) => {
   try {
-    let query = "";
-
-    if (req.query.id) {
-      query = `SELECT Id as id, Username as username from users where id = '${req.query.id}'`;
-    } else {
-      query = `SELECT Id as id, Username as username from users`;
-    }
-
-    const result = await connection(query);
+    const result = await mongodbConnection.getUserByUsername(
+      req.query.username
+    );
 
     return res.status(200).json({ isError: false, result });
   } catch (error) {

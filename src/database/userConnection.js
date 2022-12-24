@@ -5,15 +5,15 @@ const uri =
 const db = "yy-budgetarian";
 const collection = "users";
 
-exports.getUserByUsername = async (username) => {
+exports.getUserByUsername = async (id) => {
   const client = new MongoClient(uri);
   try {
     await client.connect();
-    
+
     const result = await client
       .db(db)
       .collection(collection)
-      .findOne({ username: username });
+      .findOne({ _id: id });
 
     return result;
   } catch (error) {

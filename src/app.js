@@ -23,7 +23,7 @@ app.use("/api/payment", paymentRoute);
 const authRoute = require("./routes/authRoute");
 app.use("/api/auth", authRoute);
 
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 app.listen(port, () => {
   console.log("Listening on app");

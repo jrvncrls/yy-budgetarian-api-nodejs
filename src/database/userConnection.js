@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
 const uri =
   "mongodb+srv://jlcarlos:Mo5l5Pg6Sa0wi7vA@cluster0.eqbysaf.mongodb.net/?retryWrites=true&w=majority";
@@ -13,7 +13,7 @@ exports.getUserById = async (id) => {
     const result = await client
       .db(db)
       .collection(collection)
-      .findOne({ _id: id });
+      .findOne({ _id: new ObjectId(id) });
 
     return result;
   } catch (error) {

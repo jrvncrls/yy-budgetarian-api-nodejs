@@ -2,7 +2,7 @@ const userConnection = require("../database/userConnection");
 
 exports.getUserById = async (req, res) => {
   try {
-    const result = await userConnection.getUserByUsername(
+    const result = await userConnection.getUserById(
       req.query.id
     );
 

@@ -5,7 +5,7 @@ const uri =
 const db = "yy-budgetarian";
 const collection = "users";
 
-exports.getUserByUsername = async (id) => {
+exports.getUserById = async (id) => {
   const client = new MongoClient(uri);
   try {
     await client.connect();

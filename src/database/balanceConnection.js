@@ -87,6 +87,10 @@ exports.updateBalanceByUser = async (userId) => {
       (userAmountDetailsById.totalPaymentAmount +
         userAmountDetailsById.totalExpenseAmount);
 
+    console.log("userAmountDetails", userAmountDetails);
+    console.log("totalExpense", totalExpense);
+    console.log("userAmountDetailsById", userAmountDetailsById);
+
     //update balance for all user
     await client
       .db(db)

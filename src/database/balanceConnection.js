@@ -104,7 +104,6 @@ exports.calculateBalancePerUser = async () => {
         },
       ])
       .toArray();
-    console.log("totalExpense", totalExpense);
 
     return { userAmountDetails, totalExpense: totalExpense[0].totalExpense };
   } catch (error) {

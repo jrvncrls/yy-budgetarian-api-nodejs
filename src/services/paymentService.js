@@ -5,16 +5,19 @@ exports.addPayment = async (req, res) => {
   try {
     const payload = req.body;
 
-    const result = await Promise.all([
-      paymentConnection.addPayment(payload),
-      balanceService.updateBalance(payload.userId),
-    ]);
+    const addPaymentResult = await paymentConnection.addPayment(payload);
+    const calBalanceResult = await balanceService.calculateBalance();
+    const updateBalResult = await balanceService.updateBalance(
+      calBalanceResult.userAmountDetails,
+      calBalanceResult.totalExpense,
+      payload.userId
+    );
 
     return res.status(200).json({
       isError: false,
       result: [
         {
-          newBalance: result[1].newBalance,
+          newBalance: updateBalResult.newBalance,
           message: "New payment has been added!",
         },
       ],
@@ -24,15 +27,11 @@ exports.addPayment = async (req, res) => {
   }
 };
 
-exports.getTotalPaymentByUser = async (req, res) => {
+exports.getPayments = async (req, res) => {
   try {
-    const query =
-      `SELECT SUM(Amount) AS Total FROM payments` +
-      `where  UserId = '${payload.userId}'`;
+    const result = await paymentConnection.getAllPayments();
 
-    const result = await connection(query);
-
-    return result.Total;
+    return res.status(200).json({ isError: false, result });
   } catch (error) {
     return res.status(500).json({ isError: true, error });
   }

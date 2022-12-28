@@ -26,3 +26,13 @@ exports.addExpense = async (req, res) => {
     return res.status(500).json({ isError: true, error });
   }
 };
+
+exports.getExpenses = async (req, res) => {
+  try {
+    const result = await expenseConnection.getAllExpenses();
+
+    return res.status(200).json({ isError: false, result });
+  } catch (error) {
+    return res.status(500).json({ isError: true, error });
+  }
+};

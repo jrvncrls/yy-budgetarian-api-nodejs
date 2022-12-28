@@ -27,3 +27,44 @@ exports.addExpense = async (payload) => {
     await client.close();
   }
 };
+
+exports.getAllExpenses = async () => {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+
+    const result = await client
+      .db(db)
+      .collection(collection)
+      .aggregate([
+        {
+          $match: { amount: { $ne: 0 } },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "users",
+          },
+        },
+        { $unwind: "$users" },
+        {
+          $project: {
+            _id: 0,
+            amount: 1,
+            description: 1,
+            method: 1,
+            username: "$users.username",
+          },
+        },
+      ])
+      .toArray();
+
+    return result;
+  } catch (error) {
+    return error;
+  } finally {
+    await client.close();
+  }
+};

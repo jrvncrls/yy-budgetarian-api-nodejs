@@ -26,3 +26,43 @@ exports.addPayment = async (payload) => {
     await client.close();
   }
 };
+
+exports.getAllPayments = async () => {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+
+    const result = await client
+      .db(db)
+      .collection(collection)
+      .aggregate([
+        {
+          $match: { amount: { $ne: 0 } },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "users",
+          },
+        },
+        { $unwind: "$users" },
+        {
+          $project: {
+            _id: 0,
+            amount: 1,
+            username: "$users.username",
+            paymentDate: 1,
+          },
+        },
+      ])
+      .toArray();
+
+    return result;
+  } catch (error) {
+    return error;
+  } finally {
+    await client.close();
+  }
+};

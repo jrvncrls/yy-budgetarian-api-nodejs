@@ -23,12 +23,36 @@ exports.getBalanceByUser = async (userId) => {
   }
 };
 
-exports.updateBalanceByUser = async (userId) => {
+exports.updateBalanceByUser = async (userDetails, totalExpense) => {
   const client = new MongoClient(uri);
   try {
     await client.connect();
 
-    let newBalance = 0;
+    //update balance for all user
+    const result = await client
+      .db(db)
+      .collection(collection)
+      .updateOne(
+        { userId: userDetails._id },
+        {
+          $set: {
+            amount:
+              totalExpense -
+              (userDetails.totalPaymentAmount + userDetails.totalExpenseAmount),
+          },
+        }
+      );
+
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+exports.calculateBalancePerUser = async () => {
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
 
     // Total split expense
     let totalExpense = await client
@@ -80,49 +104,9 @@ exports.updateBalanceByUser = async (userId) => {
         },
       ])
       .toArray();
-
-    let userAmountDetailsById = userAmountDetails.find((x) => x._id == userId);
-    newBalance =
-      totalExpense[0].totalExpense -
-      (userAmountDetailsById.totalPaymentAmount +
-        userAmountDetailsById.totalExpenseAmount);
-
-    console.log("userAmountDetails", userAmountDetails);
     console.log("totalExpense", totalExpense);
-    console.log("userAmountDetailsById", userAmountDetailsById);
 
-    //update balance for all user
-    await client
-      .db(db)
-      .collection(collection)
-      .updateOne(
-        { userId: userAmountDetails[0]._id },
-        {
-          $set: {
-            amount:
-              totalExpense[0].totalExpense -
-              (userAmountDetails[0].totalPaymentAmount +
-                userAmountDetails[0].totalExpenseAmount),
-          },
-        }
-      );
-
-    await client
-      .db(db)
-      .collection(collection)
-      .updateOne(
-        { userId: userAmountDetails[1]._id },
-        {
-          $set: {
-            amount:
-              totalExpense[0].totalExpense -
-              (userAmountDetails[1].totalPaymentAmount +
-                userAmountDetails[1].totalExpenseAmount),
-          },
-        }
-      );
-
-    return { newBalance };
+    return { userAmountDetails, totalExpense: totalExpense[0].totalExpense };
   } catch (error) {
     return error;
   }

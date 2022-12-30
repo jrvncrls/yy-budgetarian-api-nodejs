@@ -18,6 +18,7 @@ exports.addExpense = async (payload) => {
         description: payload.description,
         userId: new ObjectId(payload.userId),
         method: payload.method,
+        createdDateTime: new Date(),
       });
 
     return result;
@@ -55,6 +56,7 @@ exports.getAllExpenses = async () => {
             amount: 1,
             description: 1,
             method: 1,
+            createdDateTime: 1,
             username: "$users.username",
           },
         },

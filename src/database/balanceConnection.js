@@ -23,7 +23,7 @@ exports.getBalanceByUser = async (userId) => {
   }
 };
 
-exports.updateBalanceByUser = async (userDetails, totalExpense) => {
+exports.updateBalanceByUser = async (newBalance, userId) => {
   const client = new MongoClient(uri);
   try {
     await client.connect();
@@ -33,12 +33,10 @@ exports.updateBalanceByUser = async (userDetails, totalExpense) => {
       .db(db)
       .collection(collection)
       .updateOne(
-        { userId: userDetails._id },
+        { userId: userId },
         {
           $set: {
-            amount:
-              totalExpense -
-              (userDetails.totalPaymentAmount + userDetails.totalExpenseAmount),
+            amount: newBalance,
           },
         }
       );

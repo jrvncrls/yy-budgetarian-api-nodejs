@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
       result: [
         {
           isAuthorized,
-          userId: isAuthorized ? result._id : null,
+          username: isAuthorized ? result.username : null,
         },
       ],
     });

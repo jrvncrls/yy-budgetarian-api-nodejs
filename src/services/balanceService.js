@@ -3,7 +3,7 @@ const _ = require("lodash");
 
 exports.getBalanceByUser = async (req, res) => {
   try {
-    const result = await balanceConnection.getBalanceByUser(req.query.userId);
+    const result = await balanceConnection.getBalanceByUser(req.query.username);
 
     return res.status(200).json({ isError: false, result });
   } catch (error) {
@@ -11,22 +11,37 @@ exports.getBalanceByUser = async (req, res) => {
   }
 };
 
-exports.updateBalance = async (userAmountDetails, totalExpense, userId) => {
+exports.updateBalance = async (userAmountDetails, username) => {
   try {
-    for (const userDetails of userAmountDetails) {
-      const newBalance =
-        totalExpense -
-        (userDetails.totalPaymentAmount + userDetails.totalExpenseAmount);
+    const lowerBalUser = userAmountDetails.reduce((prev, curr) => {
+      return prev.newBalance < curr.newBalance ? prev : curr;
+    });
+    const higherBalUser = userAmountDetails.reduce((prev, curr) => {
+      return prev.newBalance > curr.newBalance ? prev : curr;
+    });
 
-      const roundOffBal = _.round(newBalance, 2);
+    if (lowerBalUser.newBalance != higherBalUser.newBalance) {
+      // Set lower bal user to 0 balance
+      const updateBalanceLowerBalUser =
+        await balanceConnection.updateBalanceByUser(0, lowerBalUser.username);
 
-      const result = await balanceConnection.updateBalanceByUser(
-        roundOffBal,
-        userDetails._id
-      );
-      console.log(`User ${userDetails.username} has been updated!`);
+      // Set higher bal user to balance - lowerBalance
+      const updateBalanceHigherBalUser =
+        await balanceConnection.updateBalanceByUser(
+          higherBalUser.newBalance - lowerBalUser.newBalance,
+          higherBalUser.username
+        );
+    } else {
+      // set all balance of user to 0
+      for (const userDetails of userAmountDetails) {
+        const result = await balanceConnection.updateBalanceByUser(
+          0,
+          userDetails.username
+        );
+      }
     }
-    const getBalanceResult = await balanceConnection.getBalanceByUser(userId);
+
+    const getBalanceResult = await balanceConnection.getBalanceByUser(username);
 
     return { newBalance: getBalanceResult.amount };
   } catch (error) {

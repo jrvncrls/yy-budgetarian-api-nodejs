@@ -15,7 +15,7 @@ exports.addPayment = async (payload) => {
       .collection(collection)
       .insertOne({
         amount: payload.amount,
-        userId: new ObjectId(payload.userId),
+        username: payload.username,
         paymentDate: new Date(),
       });
 
@@ -42,8 +42,8 @@ exports.getAllPayments = async () => {
         {
           $lookup: {
             from: "users",
-            localField: "userId",
-            foreignField: "_id",
+            localField: "username",
+            foreignField: "username",
             as: "users",
           },
         },

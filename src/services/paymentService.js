@@ -5,12 +5,11 @@ exports.addPayment = async (req, res) => {
   try {
     const payload = req.body;
 
-    const addPaymentResult = await paymentConnection.addPayment(payload);
+    // const addPaymentResult = await paymentConnection.addPayment(payload);
     const calBalanceResult = await balanceService.calculateBalance();
     const updateBalResult = await balanceService.updateBalance(
       calBalanceResult.userAmountDetails,
-      calBalanceResult.totalExpense,
-      payload.userId
+      payload.username
     );
 
     return res.status(200).json({

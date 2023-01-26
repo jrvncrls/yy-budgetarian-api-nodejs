@@ -1,9 +1,9 @@
 const userConnection = require("../database/userConnection");
 
-exports.getUserById = async (req, res) => {
+exports.getUserByUsername = async (req, res) => {
   try {
-    const result = await userConnection.getUserById(
-      req.query.id
+    const result = await userConnection.getUserByUsername(
+      req.query.username
     );
 
     return res.status(200).json({ isError: false, result });

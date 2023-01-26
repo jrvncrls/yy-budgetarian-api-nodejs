@@ -5,7 +5,7 @@ const uri =
 const db = "yy-budgetarian";
 const collection = "users";
 
-exports.getUserById = async (id) => {
+exports.getUserByUsername = async (username) => {
   const client = new MongoClient(uri);
   try {
     await client.connect();
@@ -13,7 +13,7 @@ exports.getUserById = async (id) => {
     const result = await client
       .db(db)
       .collection(collection)
-      .findOne({ _id: new ObjectId(id) });
+      .findOne({ username: username });
 
     return result;
   } catch (error) {

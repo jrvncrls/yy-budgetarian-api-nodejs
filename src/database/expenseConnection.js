@@ -16,7 +16,7 @@ exports.addExpense = async (payload) => {
       .insertOne({
         amount: payload.amount,
         description: payload.description,
-        userId: new ObjectId(payload.userId),
+        username: payload.username,
         method: payload.method,
         createdDateTime: new Date(),
       });
@@ -44,8 +44,8 @@ exports.getAllExpenses = async () => {
         {
           $lookup: {
             from: "users",
-            localField: "userId",
-            foreignField: "_id",
+            localField: "username",
+            foreignField: "username",
             as: "users",
           },
         },

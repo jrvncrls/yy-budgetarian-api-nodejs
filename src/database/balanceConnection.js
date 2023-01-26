@@ -1,11 +1,12 @@
-const { MongoClient, ObjectId } = require("mongodb");
+const { MongoClient } = require("mongodb");
+const _ = require("lodash");
 
 const uri =
   "mongodb+srv://jlcarlos:Mo5l5Pg6Sa0wi7vA@cluster0.eqbysaf.mongodb.net/?retryWrites=true&w=majority";
 const db = "yy-budgetarian";
 const collection = "balance";
 
-exports.getBalanceByUser = async (userId) => {
+exports.getBalanceByUser = async (username) => {
   const client = new MongoClient(uri);
   try {
     await client.connect();
@@ -13,7 +14,7 @@ exports.getBalanceByUser = async (userId) => {
     const result = await client
       .db(db)
       .collection(collection)
-      .findOne({ userId: new ObjectId(userId) });
+      .findOne({ username: username });
 
     return result;
   } catch (error) {
@@ -23,7 +24,7 @@ exports.getBalanceByUser = async (userId) => {
   }
 };
 
-exports.updateBalanceByUser = async (newBalance, userId) => {
+exports.updateBalanceByUser = async (newBalance, username) => {
   const client = new MongoClient(uri);
   try {
     await client.connect();
@@ -33,7 +34,7 @@ exports.updateBalanceByUser = async (newBalance, userId) => {
       .db(db)
       .collection(collection)
       .updateOne(
-        { userId: userId },
+        { username: username },
         {
           $set: {
             amount: newBalance,
@@ -80,24 +81,38 @@ exports.calculateBalancePerUser = async () => {
         {
           $lookup: {
             from: "expenses",
-            localField: "_id",
-            foreignField: "userId",
+            localField: "username",
+            foreignField: "username",
             as: "expenses",
           },
         },
         {
           $lookup: {
             from: "payments",
-            localField: "_id",
-            foreignField: "userId",
+            localField: "username",
+            foreignField: "username",
             as: "payments",
           },
         },
         {
           $project: {
             username: 1,
-            totalPaymentAmount: { $sum: "$payments.amount" },
-            totalExpenseAmount: { $divide: [{ $sum: "$expenses.amount" }, 2] },
+            newBalance: {
+              $round: [
+                {
+                  $subtract: [
+                    totalExpense[0].totalExpense,
+                    {
+                      $add: [
+                        { $sum: "$payments.amount" },
+                        { $divide: [{ $sum: "$expenses.amount" }, 2] },
+                      ],
+                    },
+                  ],
+                },
+                2,
+              ],
+            },
           },
         },
       ])

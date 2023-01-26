@@ -13,7 +13,7 @@ exports.login = async (payload) => {
     const result = await client
       .db(db)
       .collection(collection)
-      .findOne({ username: payload.username, password: payload.password });
+      .findOne({ username: payload.username });
 
     return result;
   } catch (error) {

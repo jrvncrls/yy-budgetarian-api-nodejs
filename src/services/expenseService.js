@@ -5,8 +5,8 @@ exports.addExpense = async (req, res) => {
   try {
     const payload = req.body;
 
-    const addExpenseResult = await expenseConnection.addExpense(payload);
-    //const calBalanceResult = await balanceService.calculateBalance();
+    // const addExpenseResult = await expenseConnection.addExpense(payload);
+    const calBalanceResult = await balanceService.calculateBalance();
     // const updateBalResult = await balanceService.updateBalance(
     //   calBalanceResult.userAmountDetails,
     //   payload.username

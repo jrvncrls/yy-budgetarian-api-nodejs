@@ -5,18 +5,12 @@ exports.addPayment = async (req, res) => {
   try {
     const payload = req.body;
 
-    // const addPaymentResult = await paymentConnection.addPayment(payload);
-    const calBalanceResult = await balanceService.calculateBalance();
-    const updateBalResult = await balanceService.updateBalance(
-      calBalanceResult.userAmountDetails,
-      payload.username
-    );
+    const addPaymentResult = await paymentConnection.addPayment(payload);
 
     return res.status(200).json({
       isError: false,
       result: [
         {
-          newBalance: updateBalResult.newBalance,
           message: "New payment has been added!",
         },
       ],

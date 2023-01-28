@@ -118,7 +118,7 @@ exports.calculateBalancePerUser = async () => {
       ])
       .toArray();
 
-    return { userAmountDetails, totalExpense: totalExpense[0].totalExpense };
+    return { userAmountDetails };
   } catch (error) {
     return error;
   }

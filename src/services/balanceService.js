@@ -28,7 +28,7 @@ exports.updateBalance = async (userAmountDetails, username) => {
       // Set higher bal user to balance - lowerBalance
       const updateBalanceHigherBalUser =
         await balanceConnection.updateBalanceByUser(
-          _.round(higherBalUser.newBalance - lowerBalUser.newBalance),
+          _.round(higherBalUser.newBalance - lowerBalUser.newBalance, 2),
           higherBalUser.username
         );
     } else {

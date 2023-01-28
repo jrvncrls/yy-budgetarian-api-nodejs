@@ -5,18 +5,18 @@ exports.addExpense = async (req, res) => {
   try {
     const payload = req.body;
 
-    // const addExpenseResult = await expenseConnection.addExpense(payload);
+    const addExpenseResult = await expenseConnection.addExpense(payload);
     const calBalanceResult = await balanceService.calculateBalance();
-    // const updateBalResult = await balanceService.updateBalance(
-    //   calBalanceResult.userAmountDetails,
-    //   payload.username
-    // );
+    const updateBalResult = await balanceService.updateBalance(
+      calBalanceResult.userAmountDetails,
+      payload.username
+    );
 
     return res.status(200).json({
       isError: false,
       result: [
         {
-          newBalance: 200,
+          newBalance: updateBalResult.newBalance,
           message: "New expense has been added!",
         },
       ],

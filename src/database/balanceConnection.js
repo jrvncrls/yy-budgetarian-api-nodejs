@@ -45,6 +45,8 @@ exports.updateBalanceByUser = async (newBalance, username) => {
     return result;
   } catch (error) {
     return error;
+  } finally {
+    await client.close();
   }
 };
 
@@ -121,5 +123,7 @@ exports.calculateBalancePerUser = async () => {
     return { userAmountDetails };
   } catch (error) {
     return error;
+  } finally {
+    await client.close();
   }
 };

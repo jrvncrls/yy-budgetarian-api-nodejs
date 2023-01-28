@@ -11,7 +11,10 @@ exports.getBalanceByUser = async (req, res) => {
   }
 };
 
-exports.updateBalance = async (userAmountDetails, username) => {
+exports.updateBalance = async (req, res) => {
+  const payload = req.body;
+  let userAmountDetails = payload.userAmountDetails;
+
   try {
     const lowerBalUser = userAmountDetails.reduce((prev, curr) => {
       return prev.newBalance < curr.newBalance ? prev : curr;
@@ -41,19 +44,22 @@ exports.updateBalance = async (userAmountDetails, username) => {
       }
     }
 
-    const getBalanceResult = await balanceConnection.getBalanceByUser(username);
-
-    return { newBalance: getBalanceResult.amount };
+    const getBalanceResult = await balanceConnection.getBalanceByUser(
+      payload.username
+    );
+    return res
+      .status(200)
+      .json({ isError: false, newBalance: getBalanceResult.amount });
   } catch (error) {
     return res.status(500).json({ isError: true, error });
   }
 };
 
-exports.calculateBalance = async () => {
+exports.calculateBalance = async (req, res) => {
   try {
     const result = await balanceConnection.calculateBalancePerUser();
 
-    return result;
+    return res.status(200).json({ isError: false, result });
   } catch (error) {
     return res.status(500).json({ isError: true, error });
   }
